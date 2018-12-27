@@ -1,10 +1,12 @@
 const errors = require('restify-errors');
 const Customer = require('../model/Customer');
+const rjwt = require('restify-jwt-community');
+const config = require('../config');
 
 module.exports = server => {
 
     // GET
-    server.get('/customers', async (req,res,next) => {
+    server.get('/customers', rjwt({ secret : config.JWT_SECRET }) , async (req,res,next) => {
         try {
             // res.send({msg : 'testing'});
             const customers = await Customer.find({});
@@ -16,7 +18,7 @@ module.exports = server => {
     });
 
     // GET_ONE
-    server.get('/customers/:id', async (req,res,next) => {
+    server.get('/customers/:id', rjwt({ secret : config.JWT_SECRET }), async (req,res,next) => {
         try {
             // res.send({msg : 'testing'});
             const customer = await Customer.findById(req.params.id);
@@ -28,7 +30,7 @@ module.exports = server => {
     });
 
     // POST
-    server.post('/customers', async (req,res,next) => {
+    server.post('/customers', rjwt({ secret : config.JWT_SECRET }), async (req,res,next) => {
 
         if(!req.is('application/json')){
             return next(new errors.InvalidContentError("Expected 'application/json'"));
@@ -50,7 +52,7 @@ module.exports = server => {
     });
 
     //PUT
-    server.put('/customers/:id', async (req,res,next) => {
+    server.put('/customers/:id', rjwt({ secret : config.JWT_SECRET }), async (req,res,next) => {
         if(!req.is('application/json')) {
             return next(new errors.InvalidContentError("Expected 'application/json'"));
         }
@@ -65,7 +67,7 @@ module.exports = server => {
     });
 
     // DELETE
-    server.del('/customers/:id', async (req,res,next) => {
+    server.del('/customers/:id', rjwt({ secret : config.JWT_SECRET }), async (req,res,next) => {
         if(!req.is('application/json')) {
             return next(new errors.InvalidContentError("Expected 'apllication/json'"));
         }
